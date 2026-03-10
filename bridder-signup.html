@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bridder — Connect. Contract. Cash Out.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Serif+SC:wght@400;700&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0b0917;
+      --surface-en:  #0f0c20;
+      --surface-zh:  #100d22;
+      --purple:      #7c5df5;
+      --purple-dim:  rgba(124,93,245,0.18);
+      --purple-glow: rgba(124,93,245,0.08);
+      --neon-green:  #00e676;
+      --neon-green-dim: rgba(0,230,118,0.12);
+      --neon-yellow: #ffd60a;
+      --neon-yellow-dim: rgba(255,214,10,0.12);
+      --text:        #e4dcff;
+      --muted:       #7b72a8;
+      --border:      rgba(124,93,245,0.2);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Instrument Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── TOP NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 40px;
+      backdrop-filter: blur(16px);
+      background: rgba(11,9,23,0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+    .logo .logo-dot { color: var(--neon-green); }
+    .logo:hover { opacity: 0.8; }
+
+    /* ── HERO SPLIT ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      padding-top: 64px;
+    }
+
+    /* EN panel */
+    .panel-en {
+      background: var(--surface-en);
+      padding: 80px 56px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .panel-en::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, rgba(0,230,118,0.09) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .panel-en::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(124,93,245,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ZH panel */
+    .panel-zh {
+      background: var(--surface-zh);
+      padding: 80px 56px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border-left: 1px solid var(--border);
+    }
+    .panel-zh::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: -100px;
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, rgba(255,214,10,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .panel-zh::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(124,93,245,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Tag chips */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+    .tag-en {
+      background: var(--neon-green-dim);
+      border: 1px solid rgba(0,230,118,0.35);
+      color: var(--neon-green);
+    }
+    .tag-zh {
+      background: var(--neon-yellow-dim);
+      border: 1px solid rgba(255,214,10,0.35);
+      color: var(--neon-yellow);
+      font-family: 'Noto Serif SC', serif;
+      letter-spacing: 0.05em;
+      text-transform: none;
+      font-size: 0.78rem;
+    }
+    .tag .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* Headlines */
+    .headline-en {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.4rem);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .headline-en em {
+      font-style: italic;
+      color: var(--neon-green);
+      text-shadow: 0 0 28px rgba(0,230,118,0.4);
+    }
+
+    .headline-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .headline-zh em {
+      font-style: normal;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 28px rgba(255,214,10,0.35);
+    }
+
+    /* Sub-copy */
+    .subcopy-en {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 420px;
+      margin-bottom: 36px;
+    }
+    .subcopy-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.9;
+      max-width: 420px;
+      margin-bottom: 36px;
+    }
+
+    /* Feature pills */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+    .feature-pill {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--purple-glow);
+      border: 1px solid var(--border);
+      color: rgba(228,220,255,0.7);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .feature-pill:hover {
+      background: var(--purple-dim);
+      border-color: rgba(124,93,245,0.35);
+    }
+    .feature-pill-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.8rem;
+    }
+    .feature-pill .icon { font-size: 0.95rem; }
+
+    /* ── SIGNUP FORMS ── */
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 400px;
+    }
+
+    .form-row { display: flex; gap: 10px; }
+    .form-row input { flex: 1; }
+
+    input, select {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 10px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: rgba(124,93,245,0.07);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    input::placeholder { color: var(--muted); }
+
+    .form-en input:focus, .form-en select:focus {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 0 3px rgba(0,230,118,0.12);
+    }
+    .form-en select { color: var(--muted); }
+    .form-en select option { background: #1a1640; color: var(--text); }
+
+    .form-zh input::placeholder { font-family: 'Noto Serif SC', serif; }
+    .form-zh input:focus, .form-zh select:focus {
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 0 3px rgba(255,214,10,0.12);
+    }
+    .form-zh select { color: var(--muted); font-family: 'Noto Serif SC', serif; }
+    .form-zh select option { background: #1a1640; color: var(--text); }
+
+    .btn-submit {
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); opacity: 0.92; }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-en {
+      background: var(--neon-green);
+      color: #050d0a;
+      box-shadow: 0 4px 24px rgba(0,230,118,0.28);
+    }
+    .btn-en:hover { box-shadow: 0 8px 36px rgba(0,230,118,0.42); }
+
+    .btn-zh {
+      background: var(--neon-yellow);
+      color: #0d0b00;
+      box-shadow: 0 4px 24px rgba(255,214,10,0.25);
+    }
+    .btn-zh:hover { box-shadow: 0 8px 36px rgba(255,214,10,0.4); }
+
+    .form-note {
+      font-size: 0.74rem;
+      margin-top: 2px;
+      color: var(--muted);
+    }
+    .form-note-zh { font-family: 'Noto Serif SC', serif; font-size: 0.72rem; }
+
+    /* ── SUCCESS STATE ── */
+    .success-msg {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 24px;
+      border-radius: 12px;
+      max-width: 400px;
+    }
+    .success-msg.show { display: flex; }
+    .success-en {
+      background: var(--neon-green-dim);
+      border: 1px solid rgba(0,230,118,0.3);
+    }
+    .success-zh {
+      background: var(--neon-yellow-dim);
+      border: 1px solid rgba(255,214,10,0.3);
+    }
+    .success-icon { font-size: 1.6rem; }
+    .success-title-en {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--neon-green);
+      font-weight: 700;
+    }
+    .success-title-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1rem;
+      color: var(--neon-yellow);
+      font-weight: 700;
+    }
+    .success-body-en { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .success-body-zh { font-size: 0.82rem; color: var(--muted); font-family: 'Noto Serif SC', serif; line-height: 1.7; }
+
+    /* ── DIVIDER ── */
+    .center-divider {
+      position: fixed;
+      top: 64px; bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--purple) 30%, var(--purple) 70%, transparent);
+      opacity: 0.3;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* ── FOOTER STATS ── */
+    .stats-bar {
+      grid-column: 1 / -1;
+      background: #080614;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+    }
+    .stat {
+      flex: 1;
+      padding: 28px 32px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--purple);
+      line-height: 1;
+    }
+    .stat-num.zh-num {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      color: var(--neon-yellow);
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .stat-label-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.75rem;
+    }
+
+    /* Stagger entrance animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-en > *, .panel-zh > * {
+      animation: fadeUp 0.65s ease both;
+    }
+    .panel-en > *:nth-child(1) { animation-delay: 0.05s; }
+    .panel-en > *:nth-child(2) { animation-delay: 0.15s; }
+    .panel-en > *:nth-child(3) { animation-delay: 0.25s; }
+    .panel-en > *:nth-child(4) { animation-delay: 0.35s; }
+    .panel-en > *:nth-child(5) { animation-delay: 0.45s; }
+    .panel-zh > *:nth-child(1) { animation-delay: 0.1s; }
+    .panel-zh > *:nth-child(2) { animation-delay: 0.2s; }
+    .panel-zh > *:nth-child(3) { animation-delay: 0.3s; }
+    .panel-zh > *:nth-child(4) { animation-delay: 0.4s; }
+    .panel-zh > *:nth-child(5) { animation-delay: 0.5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 800px) {
+      nav { padding: 14px 20px; }
+      .hero { grid-template-columns: 1fr; }
+      .panel-en, .panel-zh { padding: 60px 28px 50px; }
+      .center-divider { display: none; }
+      .panel-zh { border-left: none; border-top: 1px solid var(--border); }
+      .stats-bar { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="center-divider"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="https://www.bridder.space/" target="_blank" rel="noopener">bridder<span class="logo-dot">.</span>space</a>
+  </nav>
+
+  <!-- HERO SPLIT -->
+  <div class="hero">
+
+    <!-- ── LEFT: INFLUENCER (EN) ── -->
+    <div class="panel-en">
+      <div class="tag tag-en"><span class="dot"></span> For Influencers</div>
+
+      <h1 class="headline-en">
+        Brand deals,<br/>
+        <em>on your terms.</em><br/>
+        No middlemen.
+      </h1>
+
+      <p class="subcopy-en">
+        Bridder connects you directly with Chinese e-commerce brands — with transparent pay, milestone-based contracts, and zero chasing invoices. Your reach, your rates, your rules.
+      </p>
+
+      <div class="features">
+        <div class="feature-pill"><span class="icon">🔎</span> Browse open brand briefs</div>
+        <div class="feature-pill"><span class="icon">📋</span> Smart-match by niche & audience</div>
+        <div class="feature-pill"><span class="icon">🔒</span> Escrow — get paid on delivery</div>
+        <div class="feature-pill"><span class="icon">📈</span> KPI-linked milestones</div>
+        <div class="feature-pill"><span class="icon">🌏</span> Tap the Chinese market first</div>
+      </div>
+
+      <form class="signup-form form-en" id="form-en" onsubmit="handleSubmit(event,'en')">
+        <div class="form-row">
+          <input type="text" placeholder="First name" required/>
+          <input type="text" placeholder="Last name" required/>
+        </div>
+        <input type="email" placeholder="Email address" required/>
+        <input type="url" placeholder="TikTok / Instagram / YouTube URL"/>
+        <select required>
+          <option value="" disabled selected>Your primary niche…</option>
+          <option>Beauty & Skincare</option>
+          <option>Fashion & Style</option>
+          <option>Tech & Gadgets</option>
+          <option>Food & Lifestyle</option>
+          <option>Fitness & Wellness</option>
+          <option>Home & Living</option>
+          <option>Other</option>
+        </select>
+        <button type="submit" class="btn-submit btn-en">Join the Waitlist →</button>
+        <span class="form-note form-note-en">Early access · No spam · Cancel anytime</span>
+      </form>
+
+      <div class="success-msg success-en" id="success-en">
+        <div class="success-icon">✦</div>
+        <div class="success-title-en">You're on the list.</div>
+        <div class="success-body-en">We'll reach out with early access details. Brands are already waiting to work with creators like you.</div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: MERCHANT (ZH) ── -->
+    <div class="panel-zh">
+      <div class="tag tag-zh"><span class="dot"></span> 面向商家</div>
+
+      <h1 class="headline-zh">
+        精准触达美国网红，<br/>
+        <em>保障ROI，</em><br/>
+        告别无效沟通。
+      </h1>
+
+      <p class="subcopy-zh">
+        Bridder 将中国卖家与有意愿接单的美国网红直接连接。网红主动来找你，合同透明，里程碑付款，做不到即退款——不再为追单烦恼。
+      </p>
+
+      <div class="features">
+        <div class="feature-pill feature-pill-zh"><span class="icon">🎯</span> 网红主动发起合作</div>
+        <div class="feature-pill feature-pill-zh"><span class="icon">📑</span> 合同保障 · 里程碑付款</div>
+        <div class="feature-pill feature-pill-zh"><span class="icon">💰</span> 预付托管 · 自动到账</div>
+        <div class="feature-pill feature-pill-zh"><span class="icon">📊</span> KPI透明 · 未达标可退款</div>
+        <div class="feature-pill feature-pill-zh"><span class="icon">🕐</span> 节省90%对接时间</div>
+      </div>
+
+      <form class="signup-form form-zh" id="form-zh" onsubmit="handleSubmit(event,'zh')">
+        <div class="form-row">
+          <input type="text" placeholder="姓名" required/>
+          <input type="text" placeholder="公司 / 店铺名" required/>
+        </div>
+        <input type="email" placeholder="邮箱地址" required/>
+        <input type="text" placeholder="主营品类（如：美妆、数码、家居）"/>
+        <select required>
+          <option value="" disabled selected>月均推广预算…</option>
+          <option>¥5,000 以下</option>
+          <option>¥5,000 – ¥20,000</option>
+          <option>¥20,000 – ¥100,000</option>
+          <option>¥100,000 以上</option>
+        </select>
+        <button type="submit" class="btn-submit btn-zh">立即加入候补名单 →</button>
+        <span class="form-note form-note-zh">优先内测资格 · 不会发送垃圾邮件 · 随时退出</span>
+      </form>
+
+      <div class="success-msg success-zh" id="success-zh">
+        <div class="success-icon">✦</div>
+        <div class="success-title-zh">已成功加入等候名单</div>
+        <div class="success-body-zh">我们将优先为您开放内测权限。已有多位美国网红在等待与中国商家合作。</div>
+      </div>
+    </div>
+
+    <!-- ── STATS BAR ── -->
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num">8%</div>
+        <div class="stat-label">Average cold-outreach reply rate today</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">↑ 10×</div>
+        <div class="stat-label">Higher response when influencers reach out first</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Payment disputes with milestone escrow</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num zh-num">主动接单</div>
+        <div class="stat-label stat-label-zh">网红有意愿 · 商家省时间</div>
+      </div>
+    </div>
+
+  </div><!-- .hero -->
+
+  <script>
+    function handleSubmit(e, side) {
+      e.preventDefault();
+      const form = document.getElementById('form-' + side);
+      const success = document.getElementById('success-' + side);
+      form.style.opacity = '0';
+      form.style.transition = 'opacity 0.3s';
+      setTimeout(() => {
+        form.style.display = 'none';
+        success.classList.add('show');
+        success.style.animation = 'fadeUp 0.5s ease both';
+      }, 300);
+    }
+  </script>
+
+</body>
+</html>
